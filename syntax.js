@@ -74,7 +74,6 @@
 		}
 		// concat `fileTypes` with array of associated file types,
 		fileTypes = fileTypes.concat(VALID_FILE_TYPE_ASSOCS[fileType]);
-		console.log('`fileTypes` ->', fileTypes);
 		// and return the corresponding array of associated file types
 		return fileTypes;
 	}
@@ -133,7 +132,6 @@
 		var splitFileName = fileName.split('.');
 		// get the file type
 		var fileType = splitFileName[splitFileName.length - 1];
-		console.log('`fileType` ->', fileType);
 		// check the file type against valid file types and synonyms
 		var isValidFileType = VALID_FILE_TYPES.indexOf(fileType) !== -1 || isFileTypeSynonym(fileType);
 		// if `fileType` is not a valid file type (or synonym), simply return
