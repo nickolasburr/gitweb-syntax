@@ -151,7 +151,16 @@
 		});
 		// highlight `<div class="pre">` blocks instead of default `<pre><code>` blocks
 		$('div.pre').each(function (i, block) {
+			// highlight the given block
 			hljs.highlightBlock(block);
+		});
+		// reset the line numbers back to default color
+		$('.linenr').each(function (i, element) {
+			$(element).css('color', '#000');
+			// including child nodes
+			if ($(element).has('.hljs-number')) {
+				$(element).find('.hljs-number').css('color', '#000');
+			}
 		});
 	}
 }).call(this, jQuery);
