@@ -10,7 +10,7 @@
 	// valid file types
 	var VALID_FILE_TYPES = [
 		'c', 'css', 'js',
-		'htaccess', 'html',
+		'go', 'htaccess', 'html',
 		'json', 'md', 'php',
 		'pl', 'py', 'rb',
 		'sh', 'xml', 'xslt'
@@ -156,10 +156,10 @@
 		});
 		// reset the line numbers back to default color
 		$('.linenr').each(function (i, element) {
-			$(element).css('color', '#000');
+			$(element).css('color', '#4183c4');
 			// including child nodes
 			if ($(element).has('.hljs-number')) {
-				$(element).find('.hljs-number').css('color', '#000');
+				$(element).find('.hljs-number').css('color', '#4183c4');
 			}
 		});
 	}
