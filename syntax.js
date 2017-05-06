@@ -8,6 +8,8 @@
 (function ($) {
 	'use strict';
 
+	var SHEBANG = '#!';
+
 	// valid file types
 	var VALID_FILE_TYPES = [
 	  'c',
@@ -274,23 +276,28 @@
 		// first source line of code `<div class="pre">`
 		var fslocWrap   = $('.page_body .pre')[0],
 		    fslocText   = $(fslocWrap).text(),
-		    targetPath  = this.toArray(fslocText, '#!')[1],
+		    targetPath  = this.toArray(fslocText, SHEBANG)[1],
 		    components  = this.toArray(targetPath, '/'),
 		    executable  = components[this.getLastIndex(components)],
 		    flagOptions = this.toArray(executable, new RegExp(/\s/)),
 		    hasOptions  = this.toBool(this.getLastIndex(flagOptions));
-		// if the declaration does not have any flag options given (e.g. '/usr/bin/perl'),
-		// `executable` will only hold the value of the executable name (e.g. 'perl')
+		// if the declaration does not have any flag options given (e.g. '/bin/bash'),
+		// `executable` will hold the string value of the executable name (e.g. 'bash')
 		if (!hasOptions && this.inArray(executable, VALID_LANG_NAMES)) {
 			return executable;
 		}
-		// /bin/sh -x some/path/to/exec argOne argTwo
+		// if the declaration does have flag options specified and the target executable
+		// is part of the declaration absolute path (e.g. '/usr/bin/perl -w'), `executable`
+		// will be the string value of the executable name and its options (e.g. 'perl -w'),
+		// `flagOptions` will be an array of strings, split from `executable` (e.g. ['perl', '-w']),
+		// and `flagOptions[0]` will hold the value of the target executable (e.g. 'perl')
 		if (hasOptions && this.inArray(flagOptions[0], VALID_LANG_NAMES)) {
 			return flagOptions[0];
 		}
-		// if the declaration does have flag options specified (e.g. '/usr/bin/env python -c'),
-		// `executable` will hold the value of the executable name and its options (e.g. 'env python -c'),
-		// `flagOptions` will hold the values of the space-removed values (e.g. ['env', 'python', '-c']),
+		// if the declaration does have flag options specified and the target executable is *not*
+		// part of the declaration absolute path (e.g. '/usr/bin/env python -c'), `executable`
+		// will be the string value of the executable name and its options (e.g. 'env python -c'),
+		// `flagOptions` will be an array of strings, split from `executable` (e.g. ['env', 'python', '-c']),
 		// and `flagOptions[1]` will hold the value of the target executable (e.g. 'python')
 		if (hasOptions && this.inArray(flagOptions[1], VALID_LANG_NAMES)) {
 			return flagOptions[1];
@@ -303,7 +310,7 @@
 		// first source line of code `<div class="pre">`
 		var fslocWrap = $('.page_body .pre')[0],
 		    fslocText = $(fslocWrap).text(),
-		    lastIndex = this.getLastIndex(this.toArray(fslocText, '#!'));
+		    lastIndex = this.getLastIndex(this.toArray(fslocText, SHEBANG));
 		return this.toBool(lastIndex);
 	};
 
