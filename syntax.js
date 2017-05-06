@@ -10,11 +10,21 @@
 
 	// valid file types
 	var VALID_FILE_TYPES = [
-	  'c', 'css', 'js',
-	  'go', 'htaccess', 'html',
-	  'json', 'md', 'php',
-	  'pl', 'py', 'rb',
-	  'sh', 'xml', 'xslt'
+	  'c',
+	  'css',
+	  'js',
+	  'go',
+	  'htaccess',
+	  'html',
+	  'json',
+	  'md',
+	  'php',
+	  'pl',
+	  'py',
+	  'rb',
+	  'sh',
+	  'xml',
+	  'xslt'
 	],
 	// valid file type synonyms
 	VALID_FILE_TYPE_SYNONYMS = {
@@ -33,16 +43,27 @@
 	  php:  ['css', 'html', 'js']
 	},
 	VALID_LANG_NAMES = [
-	  'bash', 'c', 'c++', 'css',
-	  'javascript', 'go', 'html',
-	  'markdown', 'php', 'perl',
-	  'python', 'ruby', 'xml'
+	  'bash',
+	  'c',
+	  'cpp',
+	  'css',
+	  'javascript',
+	  'go',
+	  'html',
+	  'markdown',
+	  'php',
+	  'perl',
+	  'python',
+	  'ruby',
+	  'xml'
 	],
 	VALID_LANG_ASSOC_FILE_TYPES = {
+	  bash:   'sh',
 	  perl:   'pl',
 	  php:    'php',
 	  python: 'py',
-	  ruby:   'rb'
+	  ruby:   'rb',
+	  sh:     'sh'
 	};
 
 	/**
@@ -260,12 +281,10 @@
 		// if the declaration does not have any flag options given (e.g. '/usr/bin/perl'),
 		// `executable` will only hold the value of the executable name (e.g. 'perl')
 		if (!hasOptions && this.inArray(executable, VALID_LANG_NAMES)) {
-			console.log('syntax.js: `Syntax.getExecutableType` -> `executable` ->', executable);
 			return executable;
 		}
 		// /bin/sh -x some/path/to/exec argOne argTwo
 		if (hasOptions && this.inArray(flagOptions[0], VALID_LANG_NAMES)) {
-			console.log('syntax.js: `Syntax.getExecutableType` -> `flagOptions[0]` ->', flagOptions[0]);
 			return flagOptions[0];
 		}
 		// if the declaration does have flag options specified (e.g. '/usr/bin/env python -c'),
@@ -273,7 +292,6 @@
 		// `flagOptions` will hold the values of the space-removed values (e.g. ['env', 'python', '-c']),
 		// and `flagOptions[1]` will hold the value of the target executable (e.g. 'python')
 		if (hasOptions && this.inArray(flagOptions[1], VALID_LANG_NAMES)) {
-			console.log('syntax.js: `Syntax.getExecutableType` -> `flagOptions[1]` ->', flagOptions[1]);
 			return flagOptions[1];
 		}
 		return null;
@@ -285,7 +303,6 @@
 		var fslocWrap = $('.page_body .pre')[0],
 		    fslocText = $(fslocWrap).text(),
 		    lastIndex = this.getLastIndex(this.toArray(fslocText, '#!'));
-		console.log('syntax.js: `Syntax.isExecutable` -> `fslocText` ->', fslocText);
 		return this.toBool(lastIndex);
 	};
 
@@ -328,7 +345,6 @@
 		         : !this.inArray(fileType, VALID_FILE_TYPES)
 		         ? this.getPrimaryFileType(fileType)
 		         : fileType;
-		console.log('syntax.js: `Syntax.highlightSyntax` -> `fileType` ->', fileType);
 		// configure highlight settings to replace tabs (for improved viewing),
 		// and restrict highlighting to the language(s) associated with `fileType`
 		hljs.configure({
