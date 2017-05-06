@@ -55,15 +55,16 @@
 	  'perl',
 	  'python',
 	  'ruby',
+	  'sh',
 	  'xml'
 	],
 	VALID_LANG_ASSOC_FILE_TYPES = {
-	  bash:   'sh',
+	  bash:   'bash',
 	  perl:   'pl',
 	  php:    'php',
 	  python: 'py',
 	  ruby:   'rb',
-	  sh:     'sh'
+	  sh:     'bash'
 	};
 
 	/**
