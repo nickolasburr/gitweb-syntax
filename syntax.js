@@ -10,57 +10,58 @@
 
 	var SHEBANG = '#!';
 
-	// valid file types
-	var VALID_FILE_TYPES = [
-	  'c',
-	  'css',
-	  'js',
-	  'go',
-	  'htaccess',
-	  'html',
-	  'json',
-	  'md',
-	  'php',
-	  'pl',
-	  'py',
-	  'rb',
-	  'sh',
-	  'xml',
-	  'xslt'
-	],
-	// valid file type synonyms
-	VALID_FILE_TYPE_SYNONYMS = {
-	  c:    ['cpp', 'h'],
-	  html: ['htm', 'dhtml', 'xhtml'],
-	  js:   ['jse', 'json'],
-	  pl:   ['cgi', 'perl'],
-	  php:  ['php5', 'phar', 'phtml'],
-	  py:   ['pyc'],
-	  rb:   ['erb']
+	// primary file types by language
+	var LANG_PRIMARY_FILE_TYPES = {
+		bash:       'sh',
+	  c:          'c',
+	  cpp:        'cpp',
+	  cs:         'cs',
+	  css:        'css',
+	  javascript: 'js',
+	  go:         'go',
+	  html:       'html',
+	  markdown:   'md',
+	  php:        'php',
+	  perl:       'pl',
+	  python:     'py',
+	  ruby:       'rb',
+	  sql:        'sql',
+	  typescript: 'ts',
+	  xml:        'xml',
+	  yaml:       'yml'
 	},
-	// valid file type associations
-	VALID_FILE_TYPE_ASSOCS = {
-	  html: ['css', 'js', 'php'],
-	  json: ['js'],
-	  php:  ['css', 'html', 'js']
+	// file type synonyms
+	LANG_FILE_TYPE_SYNONYMS = {
+		bash:       ['bash', 'csh', 'ksh', 'zsh'],
+	  c:          ['h'],
+	  html:       ['htm', 'dhtml', 'xhtml'],
+	  javascript: ['jse', 'json'],
+	  markdown:   ['markdown'],
+	  perl:       ['cgi', 'perl'],
+	  php:        ['php5', 'phar', 'phtml'],
+	  python:     ['pyc'],
+	  ruby:       ['erb']
 	},
-	VALID_LANG_NAMES = [
+	// file type associations, identified by the
+	// primary file type of the associate members
+	FILE_TYPE_ASSOCS = {
+	  html:       ['css', 'js', 'php'],
+	  json:       ['js'],
+	  javascript: ['css', 'html', 'json', 'php'],
+	  php:        ['css', 'html', 'js']
+	},
+	EXEC_LANG_NAMES = [
 	  'bash',
 	  'c',
 	  'cpp',
-	  'css',
-	  'javascript',
+	  'cs',
 	  'go',
-	  'html',
-	  'markdown',
-	  'php',
 	  'perl',
+	  'php',
 	  'python',
-	  'ruby',
-	  'sh',
-	  'xml'
+	  'ruby'
 	],
-	VALID_LANG_ASSOC_FILE_TYPES = {
+	EXEC_LANG_FILE_TYPES = {
 	  bash:   'bash',
 	  perl:   'pl',
 	  php:    'php',
@@ -222,29 +223,29 @@
 	Syntax.getFileTypeAssocs = function (fileType) {
 		// will hold an array of strings representing file types
 		var fileTypes = [];
-		// object keys from `VALID_FILE_TYPE_ASSOCS`
-		var keys = this.getKeys(VALID_FILE_TYPE_ASSOCS);
+		// object keys from `FILE_TYPE_ASSOCS`
+		var keys = this.getKeys(FILE_TYPE_ASSOCS);
 		// push `fileType` onto `fileTypes` array
 		fileTypes.push(fileType);
-		// if `fileType` isn't a key found in `VALID_FILE_TYPE_ASSOCS`,
+		// if `fileType` isn't a key found in `FILE_TYPE_ASSOCS`,
 		// just return `fileTypes` array
 		if (!this.inArray(fileType, keys)) {
 			return fileTypes;
 		}
 		// concat `fileTypes` with array of associated file types,
 		// and return the corresponding array of associated file types
-		return fileTypes.concat(VALID_FILE_TYPE_ASSOCS[fileType]);
+		return fileTypes.concat(FILE_TYPE_ASSOCS[fileType]);
 	};
 
 	// get the primary file type from a synonym
 	Syntax.getPrimaryFileType = function (fileType) {
-		// object keys from `VALID_FILE_TYPE_SYNONYMS`
-		var keys   = this.getKeys(VALID_FILE_TYPE_SYNONYMS),
+		// object keys from `LANG_FILE_TYPE_SYNONYMS`
+		var keys   = this.getKeys(LANG_FILE_TYPE_SYNONYMS),
 		    length = keys.length;
 		// check known synonyms against `fileType`
 		for (var i = 0; i < length; i += 1) {
 			var thisKey  = keys[i],
-			    synonyms = VALID_FILE_TYPE_SYNONYMS[thisKey];
+			    synonyms = LANG_FILE_TYPE_SYNONYMS[thisKey];
 			// if `fileType` is found in synonyms array, return the key (primary file type)
 			if (this.inArray(fileType, synonyms)) {
 				return thisKey;
@@ -255,13 +256,13 @@
 
 	// determine if file type is synonym (or can be applied to) by another file type
 	Syntax.isFileTypeSynonym = function (fileType) {
-		// object keys from `VALID_FILE_TYPE_SYNONYMS`
-		var keys   = this.getKeys(VALID_FILE_TYPE_SYNONYMS),
+		// object keys from `LANG_FILE_TYPE_SYNONYMS`
+		var keys   = this.getKeys(LANG_FILE_TYPE_SYNONYMS),
 		    length = keys.length;
 		// loop through `keys` array
 		for (var i = 0; i < length; i += 1) {
 			var thisKey  = keys[i],
-			    synonyms = VALID_FILE_TYPE_SYNONYMS[thisKey];
+			    synonyms = LANG_FILE_TYPE_SYNONYMS[thisKey];
 			// if `fileType` is a synonym, return true
 			if (synonyms.indexOf(fileType) !== -1) {
 				return true;
@@ -283,7 +284,7 @@
 		    hasOptions  = this.toBool(this.getLastIndex(flagOptions));
 		// if the declaration does not have any flag options given (e.g. '/bin/bash'),
 		// `executable` will hold the string value of the executable name (e.g. 'bash')
-		if (!hasOptions && this.inArray(executable, VALID_LANG_NAMES)) {
+		if (!hasOptions && this.inArray(executable, LANG_NAMES)) {
 			return executable;
 		}
 		// if the declaration does have flag options specified and the target executable
@@ -291,7 +292,7 @@
 		// will be the string value of the executable name and its options (e.g. 'perl -w'),
 		// `flagOptions` will be an array of strings, split from `executable` (e.g. ['perl', '-w']),
 		// and `flagOptions[0]` will hold the value of the target executable (e.g. 'perl')
-		if (hasOptions && this.inArray(flagOptions[0], VALID_LANG_NAMES)) {
+		if (hasOptions && this.inArray(flagOptions[0], LANG_NAMES)) {
 			return flagOptions[0];
 		}
 		// if the declaration does have flag options specified and the target executable is *not*
@@ -299,7 +300,7 @@
 		// will be the string value of the executable name and its options (e.g. 'env python -c'),
 		// `flagOptions` will be an array of strings, split from `executable` (e.g. ['env', 'python', '-c']),
 		// and `flagOptions[1]` will hold the value of the target executable (e.g. 'python')
-		if (hasOptions && this.inArray(flagOptions[1], VALID_LANG_NAMES)) {
+		if (hasOptions && this.inArray(flagOptions[1], LANG_NAMES)) {
 			return flagOptions[1];
 		}
 		return null;
@@ -317,7 +318,7 @@
 	// determine if file type is valid based on extension or content
 	Syntax.isFileTypeValid = function (fileType) {
 		var isFileTypeValid = true;
-		if (this.inArray(fileType, VALID_FILE_TYPES)) {
+		if (this.inArray(fileType, LANG_PRIMARY_FILE_TYPES)) {
 			return true;
 		}
 		if (this.isFileTypeSynonym(fileType)) {
@@ -334,11 +335,11 @@
 		var queryParams = this.toArray(queryString, ';f='),
 		    lastIndex   = this.getLastIndex(queryParams);
 		// if `;f=` does not exist within the query string, return early
-		// => this should always be true, but just for sanity, check it
+		// => this should always be true when reaching this point,
+		//    but to be absolutely certain, check it once more
 		if (!this.toBool(lastIndex)) {
 			return;
 		}
-		// full path name of the file
 		var pathName = this.toArray(this.toArray(queryParams[1], ';')[0], '/'),
 		    fileName = this.toArray(pathName[this.getLastIndex(pathName)], '.'),
 		    fileType = fileName[this.getLastIndex(fileName)];
@@ -349,8 +350,8 @@
 		// if `fileType` turns out to be a synonym and not a primary file type,
 		// get the primary file type instead; otherwise, make no change
 		fileType = this.isExecutable()
-		         ? VALID_LANG_ASSOC_FILE_TYPES[this.getExecutableType()]
-		         : !this.inArray(fileType, VALID_FILE_TYPES)
+		         ? EXEC_LANG_FILE_TYPES[this.getExecutableType()]
+		         : !(this.inArray(fileType, LANG_PRIMARY_FILE_TYPES))
 		         ? this.getPrimaryFileType(fileType)
 		         : fileType;
 		// configure highlight settings to replace tabs (for improved viewing),
