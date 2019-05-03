@@ -1,6 +1,6 @@
 /**
  *
- * Microlibrary for language detection and syntax highlighting Gitweb blobs.
+ * gitweb.js: Basic language detection and syntax highlighting Gitweb blobs.
  *
  * @author Nickolas Burr <nickolasburr@gmail.com>
  *
