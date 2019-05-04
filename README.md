@@ -32,7 +32,7 @@ By default, language support is provided for:
 
 ## File Type Associations
 
-All languages have at least one file types that can be directly associated with
+All languages have at least one file type that can be directly associated with
 source files of the given language. Likewise, many languages have multiple file
 types that should be recognized as the same language. An example would be in PHP,
 where `.php`, `.php5`, and `.phtml` are all valid PHP file types.
