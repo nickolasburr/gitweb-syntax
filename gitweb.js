@@ -1,9 +1,9 @@
 /**
+ * gitweb.js: Basic language detection and syntax highlighting support for legacy gitweb(1).
  *
- * gitweb.js: Basic language detection and syntax highlighting Gitweb blobs.
- *
- * @author Nickolas Burr <nickolasburr@gmail.com>
- *
+ * @package     gitweb.js
+ * @copyright   Copyright (C) 2019 Nickolas Burr <nickolasburr@gmail.com>
+ * @license     MIT
  */
 
 (function ($) {
@@ -50,8 +50,8 @@
     };
 
     /**
-     * file type associations, identified by the
-     * primary file type of the associate members
+     * File type associations, identified by the
+     * primary file type of associated members.
      */
     var FILE_TYPE_ASSOCS = {
         html:       ['css', 'js', 'php'],
