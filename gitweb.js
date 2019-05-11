@@ -466,13 +466,25 @@
      */
     Syntax.getExecutableType = function () {
         /** @var {HTMLElement} fslocWrap ~ First SLOC `<div class="pre">`. */
-        var fslocWrap   = $('.page_body .pre')[0],
-            fslocText   = $(fslocWrap).text(),
-            targetPath  = this.toArray(fslocText, SHEBANG)[1],
-            components  = this.toArray(targetPath, '/'),
-            executable  = components[this.getLastIndex(components)],
-            flagOptions = this.toArray(executable, new RegExp(/\s/)),
-            hasOptions  = this.toBool(this.getLastIndex(flagOptions));
+        var fslocWrap = $('.page_body .pre')[0];
+
+        /** @var {String} fslocText */
+        var fslocText = $(fslocWrap).text();
+
+        /** @var {String} targetPath */
+        var targetPath = this.toArray(fslocText, SHEBANG)[1];
+
+        /** @var {Array} components */
+        var components = this.toArray(targetPath, '/');
+
+        /** @var {String} executable */
+        var executable = components[this.getLastIndex(components)];
+
+        /** @var {Array} flagOptions */
+        var flagOptions = this.toArray(executable, new RegExp(/\s/));
+
+        /** @var {Boolean} hasOptions */
+        var hasOptions = this.toBool(this.getLastIndex(flagOptions));
 
         /**
          * If the declaration does not have any flag options
@@ -549,14 +561,14 @@
     /**
      * Highlight file syntax.
      *
-     * @param {string} queryString
+     * @param {String} queryString
      * @return {void}
      */
     Syntax.highlightSyntax = function (queryString) {
-        /** @var {array} queryParams */
+        /** @var {Array} queryParams */
         var queryParams = this.toArray(queryString, ';f=');
 
-        /** @var {int} lastIndex */
+        /** @var {Number} lastIndex */
         var lastIndex = this.getLastIndex(queryParams);
 
         /**
