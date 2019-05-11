@@ -5,14 +5,33 @@
  * @copyright   Copyright (C) 2019 Nickolas Burr <nickolasburr@gmail.com>
  * @license     MIT
  */
-
 (function ($) {
     'use strict';
 
+    /**
+     * @var {String} DEFAULT_COLOR
+     */
+    var DEFAULT_COLOR = '#4183c4';
+
+    /**
+     * @var {String} SLOC_PRE_SELECTOR
+     */
+    var SLOC_PRE_SELECTOR = '.page_body .pre';
+
+    /**
+     * @var {String} SHEBANG
+     */
     var SHEBANG = '#!';
 
     /**
+     * @var {String} TAB_REPLACE
+     */
+    var TAB_REPLACE = '  ';
+
+    /**
      * Primary file types by language.
+     *
+     * @var {Object} LANG_PRIMARY_FILE_TYPES
      */
     var LANG_PRIMARY_FILE_TYPES = {
         bash:       'sh',
@@ -36,6 +55,8 @@
 
     /**
      * File type synonyms.
+     *
+     * @var {Object} LANG_FILE_TYPE_SYNONYMS
      */
     var LANG_FILE_TYPE_SYNONYMS = {
         bash:       ['bash', 'csh', 'ksh', 'zsh'],
@@ -52,8 +73,10 @@
     /**
      * File type associations, identified by the
      * primary file type of associated members.
+     *
+     * @var {Object} FILE_TYPE_ASSOCIATIONS
      */
-    var FILE_TYPE_ASSOCS = {
+    var FILE_TYPE_ASSOCIATIONS = {
         html:       ['css', 'js', 'php'],
         json:       ['js'],
         javascript: ['css', 'html', 'json', 'php'],
@@ -63,6 +86,8 @@
     /**
      * Supported languages commonly used as runtime
      * for executables, identified by shebang path.
+     *
+     * @var {Array} EXEC_LANG_NAMES
      */
     var EXEC_LANG_NAMES = [
         'bash',
@@ -76,6 +101,9 @@
         'ruby'
     ];
 
+    /**
+     * @var {Object} EXEC_LANG_FILE_TYPES
+     */
     var EXEC_LANG_FILE_TYPES = {
       bash:   'bash',
       perl:   'pl',
@@ -87,6 +115,8 @@
 
     /**
      * Utility methods
+     *
+     * @var {Object} Utils
      */
     var Utils = {};
 
@@ -94,7 +124,7 @@
      * Get type of `arg`.
      *
      * @param {mixed} arg
-     * @return {string}
+     * @return {String}
      */
     Utils.getType = function (arg) {
         return (typeof arg);
@@ -104,7 +134,7 @@
      * Coerce `value` to string.
      *
      * @param {mixed} value
-     * @return {string}
+     * @return {String}
      */
     Utils.toString = function (value) {
         return ('' + value);
@@ -114,7 +144,7 @@
      * Coerce `value` to number.
      *
      * @param {scalar} value
-     * @return {int}
+     * @return {Number}
      */
     Utils.toNumber = function (value) {
         return +(value);
@@ -124,7 +154,7 @@
      * Coerce `value` to boolean.
      *
      * @param {scalar} value
-     * @return bool
+     * @return {Boolean}
      */
     Utils.toBool = function (value) {
         return !!(value);
@@ -134,8 +164,8 @@
      * Coerce `value` to array.
      *
      * @param {scalar} value
-     * @param {string} delimiter
-     * @return {array}
+     * @param {String} delimiter
+     * @return {Array}
      */
     Utils.toArray = function (value, delimiter) {
         delimiter = delimiter || '';
@@ -151,7 +181,7 @@
      * Determine if `obj` is of type 'object'.
      *
      * @param {mixed} obj
-     * @return {bool}
+     * @return {Boolean}
      * @note This is a *very* loose check on the type 'object',
      *       e.g. this will return true for an object literal,
      *       Object instance, array literal, Array instance,
@@ -166,8 +196,8 @@
      * native 'Object' prototype, and not from a different
      * type of object constructor.
      *
-     * @param {object} obj
-     * @return {bool}
+     * @param {Object} obj
+     * @return {Boolean}
      */
     Utils.isNativeObject = function (obj) {
         return this.toBool(this.isObject(obj) && Object.getPrototypeOf(obj).constructor.name === 'Object');
@@ -176,8 +206,8 @@
     /**
      * Determine if object is empty or not.
      *
-     * @param {object} obj
-     * @return {bool}
+     * @param {Object} obj
+     * @return {Boolean}
      */
     Utils.isObjectEmpty = function (obj) {
         if (!this.isObject(obj)) {
@@ -191,7 +221,7 @@
      * Determine if `arr` is an Array.
      *
      * @param {mixed} arr
-     * @return {bool}
+     * @return {Boolean}
      */
     Utils.isArray = function (arr) {
         return this.toBool(arr instanceof Array);
@@ -200,9 +230,9 @@
     /**
      * Determine if `needle` is in `haystack`.
      *
-     * @param {string} needle
-     * @param {array} haystack
-     * @return {bool}
+     * @param {String} needle
+     * @param {Array} haystack
+     * @return {Boolean}
      */
     Utils.inArray = function (needle, haystack) {
         if (!this.isArray(haystack)) {
@@ -216,7 +246,7 @@
      * Determine if `element` is a valid HTMLElement object.
      *
      * @param {mixed} element
-     * @return {bool}
+     * @return {Boolean}
      */
     Utils.isElement = function (element) {
         return this.toBool(element instanceof HTMLElement);
@@ -225,8 +255,8 @@
     /**
      * Determine if `func` is a Function.
      *
-     * @param {mixed} func
-     * @return {bool}
+     * @param {Function} func
+     * @return {Boolean}
      */
     Utils.isFunction = function (func) {
         return this.toBool(this.getType(func) === 'function' && func instanceof Function);
@@ -235,8 +265,8 @@
     /**
      * Determine if `arg` is a scalar type.
      *
-     * @param {mixed} arg
-     * @return {bool}
+     * @param {scalar} arg
+     * @return {Boolean}
      */
     Utils.isScalar = function (arg) {
         var scalarTypes = [
@@ -252,7 +282,7 @@
      * Determine if `arg` is a composite type.
      *
      * @param {mixed} arg
-     * @return {bool}
+     * @return {Boolean}
      */
     Utils.isComposite = function (arg) {
         var compositeTypes = [
@@ -267,8 +297,8 @@
     /**
      * Get keys from object.
      *
-     * @param {object} obj
-     * @return {array}
+     * @param {Object} obj
+     * @return {Array}
      */
     Utils.getKeys = function (obj) {
         if (!this.isObject(obj)) {
@@ -281,8 +311,8 @@
     /**
      * Get values from object.
      *
-     * @param {object} obj
-     * @return {array}
+     * @param {Object} obj
+     * @return {Array}
      */
     Utils.getValues = function (obj) {
         if (!this.isObject(obj)) {
@@ -295,8 +325,8 @@
     /**
      * Get last index (as number) of `arr`.
      *
-     * @param {array} arr
-     * @return {int}
+     * @param {Array} arr
+     * @return {Number}
      */
     Utils.getLastIndex = function (arr) {
         if (!this.isArray(arr)) {
@@ -333,8 +363,8 @@
     /**
      * Determine if the current page is a file blob.
      *
-     * @param {string} queryString
-     * @return {bool}
+     * @param {String} queryString
+     * @return {Boolean}
      */
     Syntax.isFileBlob = function (queryString) {
         return this.toBool(this.getLastIndex(this.toArray(queryString, ';a=blob')));
@@ -343,20 +373,20 @@
     /**
      * Get file type associations.
      *
-     * @param {string} fileType
-     * @return {array}
+     * @param {String} fileType
+     * @return {Array}
      */
-    Syntax.getFileTypeAssocs = function (fileType) {
-        /** @var {array} fileTypes */
+    Syntax.getFileTypeAssocations = function (fileType) {
+        /** @var {Array} fileTypes */
         var fileTypes = [];
 
-        /** @var {array} keys */
-        var keys = this.getKeys(FILE_TYPE_ASSOCS);
+        /** @var {Array} keys */
+        var keys = this.getKeys(FILE_TYPE_ASSOCIATIONS);
 
         fileTypes.push(fileType);
 
         /**
-         * If `fileType` isn't a key found in `FILE_TYPE_ASSOCS`,
+         * If `fileType` isn't a key found in `FILE_TYPE_ASSOCIATIONS`,
          * just return `fileTypes` array.
          */
         if (!this.inArray(fileType, keys)) {
@@ -367,28 +397,28 @@
          * Otherwise, concatenate `fileTypes` with array of associated file types,
          * and return the corresponding array of associated file types.
          */
-        return fileTypes.concat(FILE_TYPE_ASSOCS[fileType]);
+        return fileTypes.concat(FILE_TYPE_ASSOCIATIONS[fileType]);
     };
 
     /**
      * Get the primary file type from a synonym.
      *
-     * @param {string} fileType
-     * @return {string|null}
+     * @param {String} fileType
+     * @return {?String}
      */
     Syntax.getPrimaryFileType = function (fileType) {
-        /** @var {array} keys */
+        /** @var {Array} keys */
         var keys = this.getKeys(LANG_FILE_TYPE_SYNONYMS);
 
-        /** @var {int} length */
+        /** @var {Number} length */
         var length = keys.length;
 
         /** Check known synonyms against `fileType`. */
         for (var i = 0; i < length; i += 1) {
-            /** @var {string} thisKey */
+            /** @var {String} thisKey */
             var thisKey  = keys[i];
 
-            /** @var {array} synonyms */
+            /** @var {Array} synonyms */
             var synonyms = LANG_FILE_TYPE_SYNONYMS[thisKey];
 
             /**
@@ -404,16 +434,16 @@
     };
 
     /**
-     * Determine if file type is synonym (or can be applied to) by another file type.
+     * Determine if file type is synonymous with primary file type.
      *
-     * @param {string} fileType
-     * @return {bool}
+     * @param {String} fileType
+     * @return {Boolean}
      */
-    Syntax.isFileTypeSynonym = function (fileType) {
-        /** @var {array} keys */
+    Syntax.isSynonymFileType = function (fileType) {
+        /** @var {Array} keys */
         var keys = this.getKeys(LANG_FILE_TYPE_SYNONYMS);
 
-        /** @var {int} length */
+        /** @var {Number} length */
         var length = keys.length;
 
         for (var i = 0; i < length; i += 1) {
@@ -432,7 +462,7 @@
     /**
      * Get executable type (e.g. 'perl' from /usr/bin/perl or /usr/bin/env perl).
      *
-     * @return {string|null}
+     * @return {?String}
      */
     Syntax.getExecutableType = function () {
         /** @var {HTMLElement} fslocWrap ~ First SLOC `<div class="pre">`. */
@@ -485,11 +515,11 @@
     /**
      * Check source code for executable declaration (e.g. /usr/bin/strace).
      *
-     * @return {bool}
+     * @return {Boolean}
      */
     Syntax.isExecutable = function () {
         /** @var {HTMLElement} fslocWrap ~ First SLOC `<div class="pre">` element. */
-        var fslocWrap = $('.page_body .pre')[0],
+        var fslocWrap = $(SLOC_PRE_SELECTOR)[0],
             fslocText = $(fslocWrap).text(),
             lastIndex = this.getLastIndex(this.toArray(fslocText, SHEBANG));
 
@@ -499,12 +529,15 @@
     /**
      * Determine if file type is valid based on extension or content.
      *
-     * @param {string} fileType
-     * @return {bool}
+     * @param {String} fileType
+     * @return {Boolean}
      */
-    Syntax.isFileTypeValid = function (fileType) {
-        if (this.inArray(fileType, LANG_PRIMARY_FILE_TYPES) ||
-            this.isFileTypeSynonym(fileType) ||
+    Syntax.isValidFileType = function (fileType) {
+        /** @var {Array} keys */
+        var keys = this.getKeys(LANG_PRIMARY_FILE_TYPES);
+
+        if (this.inArray(fileType, keys) ||
+            this.isSynonymFileType(fileType) ||
             (this.isExecutable() && this.getExecutableType())
         ) {
             return true;
@@ -542,7 +575,7 @@
         /**
          * If `fileType` is not a valid file type (or synonym), return.
          */
-        if (!this.isFileTypeValid(fileType)) {
+        if (!this.isValidFileType(fileType)) {
             return;
         }
 
@@ -552,7 +585,7 @@
          */
         fileType = this.isExecutable()
                  ? EXEC_LANG_FILE_TYPES[this.getExecutableType()]
-                 : !(this.inArray(fileType, LANG_PRIMARY_FILE_TYPES))
+                 : !(this.inArray(fileType, this.getKeys(LANG_PRIMARY_FILE_TYPES)))
                  ? this.getPrimaryFileType(fileType)
                  : fileType;
 
@@ -561,8 +594,8 @@
          * and restrict highlighting to the language(s) associated with `fileType`.
          */
         hljs.configure({
-            tabReplace: '  ',
-            languages: this.getFileTypeAssocs(fileType)
+            tabReplace: TAB_REPLACE,
+            languages: this.getFileTypeAssocations(fileType)
         });
 
         /** Highlight `<div class="pre">` blocks instead of default `<pre><code>` blocks. */
@@ -572,11 +605,11 @@
 
         /** Reset the line numbers back to default color. */
         $('.linenr').each(function (index, element) {
-            $(element).css('color', '#4183c4');
+            $(element).css('color', DEFAULT_COLOR);
 
             /** Including child nodes. */
             if ($(element).has('.hljs-number')) {
-                $(element).find('.hljs-number').css('color', '#4183c4');
+                $(element).find('.hljs-number').css('color', DEFAULT_COLOR);
             }
         });
     };
