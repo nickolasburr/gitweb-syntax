@@ -466,7 +466,7 @@
      */
     Syntax.getExecutableType = function () {
         /** @var {HTMLElement} fslocWrap ~ First SLOC `<div class="pre">`. */
-        var fslocWrap = $('.page_body .pre')[0];
+        var fslocWrap = $(SLOC_PRE_SELECTOR)[0];
 
         /** @var {String} fslocText */
         var fslocText = $(fslocWrap).text();
